@@ -1,0 +1,98 @@
+<div class="profile">
+  <mat-card>
+    <div class="profile__header">
+      <div>
+        <h2>Profile</h2>
+        <p>Manage your details, phone, and photo.</p>
+      </div>
+      <div class="profile__photo">
+        <div class="profile__avatar">
+          <img *ngIf="photoPreview; else placeholder" [src]="photoPreview" alt="Profile photo" />
+          <ng-template #placeholder>
+            <mat-icon>account_circle</mat-icon>
+          </ng-template>
+        </div>
+        <label class="photo-upload">
+          <input type="file" accept="image/*" (change)="onPhotoSelected($event)" />
+          <span>Upload Photo</span>
+        </label>
+        <small>Stored locally in your browser.</small>
+      </div>
+    </div>
+
+    <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="profile__grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Full name</mat-label>
+        <input matInput formControlName="fullName" />
+        <mat-error *ngIf="profileForm.get('fullName')?.hasError('required')">
+          Name is required
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Role</mat-label>
+        <input matInput formControlName="role" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Phone number</mat-label>
+        <input matInput formControlName="phoneNumber" placeholder="Add phone" />
+        <mat-hint *ngIf="isAdmin">Admins cannot change phone here.</mat-hint>
+      </mat-form-field>
+
+      <div class="profile__roles">
+        <span class="profile__label">Permissions</span>
+        <mat-chip-set>
+          <mat-chip *ngFor="let perm of authService.currentUser?.permissions || []">{{ perm }}</mat-chip>
+        </mat-chip-set>
+      </div>
+
+      <div class="profile__actions">
+        <button mat-flat-button color="primary" type="submit">
+          Save Profile
+        </button>
+        <span class="status success" *ngIf="saveMessage">{{ saveMessage }}</span>
+        <span class="status error" *ngIf="errorMessage">{{ errorMessage }}</span>
+      </div>
+    </form>
+  </mat-card>
+
+  <mat-card class="profile__card" *ngIf="!isAdmin">
+    <h3>Change Password</h3>
+    <form [formGroup]="passwordForm" (ngSubmit)="changePassword()" class="profile__grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Current password</mat-label>
+        <input matInput formControlName="currentPassword" type="password" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>New password</mat-label>
+        <input matInput formControlName="newPassword" type="password" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Confirm new password</mat-label>
+        <input matInput formControlName="confirmPassword" type="password" />
+      </mat-form-field>
+
+      <div class="profile__actions">
+        <button mat-stroked-button color="primary" type="submit">
+          Update Password
+        </button>
+        <span class="status success" *ngIf="passwordMessage">{{ passwordMessage }}</span>
+        <span class="status error" *ngIf="errorMessage && !saveMessage">{{ errorMessage }}</span>
+      </div>
+    </form>
+  </mat-card>
+
+  <mat-card class="profile__card" *ngIf="!isAdmin">
+    <h3>Delete Account</h3>
+    <p class="warning">Deleting your account will sign you out immediately.</p>
+    <button mat-flat-button color="warn" (click)="deleteAccount()">Delete Account</button>
+  </mat-card>
+</div>

@@ -1,0 +1,10 @@
+DB ASSUMPTIONS
+
+Database: FinRecon360
+Users: UserId (uniqueidentifier, PK); Email (nvarchar(256), unique, not null); PasswordHash (nvarchar(max), not null); FullName (nvarchar(200), not null); Role (nvarchar(50), not null); PhoneNumber (nvarchar(30), null); IsDeleted (bit, not null, default 0); CreatedAt (datetime2, not null); UpdatedAt (datetime2, not null)
+Permissions: PermissionId (int, PK, identity); Code (nvarchar(120), unique, not null); Description (nvarchar(300), null)
+Roles: RoleId (int, PK, identity); Code (nvarchar(50), unique, not null); Name (nvarchar(100), not null)
+RolePermissions: RoleId (int, FK -> Roles.RoleId); PermissionId (int, FK -> Permissions.PermissionId); PK(RoleId, PermissionId)
+UserRoles: UserId (uniqueidentifier, FK -> Users.UserId); RoleId (int, FK -> Roles.RoleId); PK(UserId, RoleId)
+UserProfilePhotos: PhotoId (uniqueidentifier, PK); UserId (uniqueidentifier, FK -> Users.UserId); StorageType (nvarchar(20), not null); PhotoUrl (nvarchar(500), null); PhotoData (varbinary(max), null); CreatedAt (datetime2, not null)
+Endpoint/table mapping (future persistence): POST /api/auth/login reads Users; GET/PUT /api/profile/me reads/updates Users (FullName, PhoneNumber, UpdatedAt); POST /api/profile/me/change-password updates Users.PasswordHash and UpdatedAt; DELETE /api/profile/me sets Users.IsDeleted; profile photo upload TODO would insert into UserProfilePhotos; dashboard summary remains read-only.

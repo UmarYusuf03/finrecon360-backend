@@ -1,0 +1,55 @@
+<div class="shell">
+  <header class="shell__top">
+    <div class="shell__brand">
+      {{ 'NAV.LOGO' | translate }}
+    </div>
+
+    <nav class="shell__nav">
+      <a
+        routerLink="/app/dashboard"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        {{ 'NAV.DASHBOARD' | translate }}
+      </a>
+      <a
+        routerLink="/app/matcher"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        *appHasPermission="'MATCHER.VIEW'"
+      >
+        {{ 'NAV.MATCHER' | translate }}
+      </a>
+      <a
+        routerLink="/app/admin"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: false }"
+        *appHasPermission="'ADMIN.DASHBOARD.VIEW'"
+      >
+        {{ 'NAV.ADMIN' | translate }}
+      </a>
+      <a
+        routerLink="/app/profile"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        {{ 'NAV.PROFILE' | translate }}
+      </a>
+    </nav>
+
+    <div class="shell__actions">
+      <app-language-switcher></app-language-switcher>
+      <div class="shell__user" *ngIf="user$ | async as user">
+        <span class="shell__user-label">{{ 'NAV.SIGNED_IN_AS' | translate }}</span>
+        <span class="shell__user-name">{{ user.displayName }}</span>
+      </div>
+      <button class="logout-btn" type="button" (click)="logout()">
+        {{ 'NAV.SIGN_OUT' | translate }}
+      </button>
+    </div>
+  </header>
+
+  <main class="shell__content">
+    <router-outlet></router-outlet>
+  </main>
+</div>
